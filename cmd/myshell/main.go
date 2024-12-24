@@ -17,8 +17,8 @@ type command struct {
 }
 
 func eval(cmd *command) error {
-
-	if cmd.cmd == "exit" {
+	switch cmd.cmd {
+	case "exit":
 		if len(cmd.args) > 1 {
 			return fmt.Errorf("invalid command args for exit")
 		}
@@ -27,6 +27,16 @@ func eval(cmd *command) error {
 			return fmt.Errorf("invalid exit code conversion for exit command")
 		}
 		os.Exit(exitcode)
+
+	case "echo":
+		if len(cmd.args) < 1 {
+			return fmt.Errorf("invalid command args for echo")
+		}
+		words := strings.Join(cmd.args, " ")
+		fmt.Printf("%s\n", words)
+	default:
+		fmt.Printf("%s: command not found\n", cmd.cmd)
+
 	}
 
 	return nil
@@ -51,7 +61,6 @@ func main() {
 			fmt.Print(err)
 		}
 
-		fmt.Printf("%s: command not found\n", ansString[:len(ansString)-1])
 	}
 
 }
