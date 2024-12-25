@@ -11,8 +11,7 @@ import (
 var _ = fmt.Fprint
 
 func main() {
-	// Uncomment this block to pass the first stage
-	// Wait for user input
+
 	for {
 		fmt.Fprint(os.Stdout, "$ ")
 		ansString, err := bufio.NewReader(os.Stdin).ReadString('\n')

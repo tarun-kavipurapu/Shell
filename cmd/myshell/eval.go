@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
@@ -63,22 +62,23 @@ func evalType(cmd *Command) error {
 		fmt.Printf("%s is a shell builtin\n", cmd.args[0])
 		return nil
 	}
-	pathString := os.Getenv("PATH")
-	paths := strings.Split(pathString, ":")
 
-	for _, path := range paths {
-		fp := filepath.Join(path, cmd.args[0])
-		if _, err := os.Stat(fp); err == nil {
-
-			fmt.Println(fp)
-			return nil
-
-		}
-
+	path, err := getPath(cmd)
+	if path != "" {
+		fmt.Println(path)
+		return nil
+	}
+	if err != nil {
+		return err
 	}
 
 	return fmt.Errorf("%s: not found", cmd.args[0])
 }
+
+/*
+if the command is not in the map then it may be a program?..
+then you can check to getPath() if the path is not empty then you can just exec the binary in that path
+*/
 func Eval(cmd *Command) error {
 	fMaps := GetFuncMap()
 	if fn, exists := fMaps[cmd.cmd]; exists {
@@ -87,7 +87,12 @@ func Eval(cmd *Command) error {
 			return err
 		}
 	} else {
-		fmt.Printf("%s: command not found\n", cmd.cmd)
+
+		err := executeCommand(cmd)
+		if err != nil {
+			return err
+		}
+
 	}
 
 	return nil
