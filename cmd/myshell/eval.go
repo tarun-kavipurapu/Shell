@@ -93,6 +93,11 @@ func evalPwd(cmd *Command) error {
 func evalCd(cmd *Command) error {
 
 	newPath := cmd.args[0]
+	if newPath == "~" {
+		HOME := os.Getenv("HOME")
+		newPath = HOME
+
+	}
 	err := os.Chdir(newPath)
 	if err != nil {
 		return fmt.Errorf("cd: /non-existing-directory: No such file or directory")
