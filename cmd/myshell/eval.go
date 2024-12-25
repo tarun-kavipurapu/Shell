@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
@@ -58,12 +59,25 @@ func evalType(cmd *Command) error {
 		return fmt.Errorf("%s:argument error", cmd.cmd)
 	}
 	_, exists := fMaps[cmd.args[0]]
-	if !exists {
-		return fmt.Errorf("%s: not found", cmd.args[0])
+	if exists {
+		fmt.Printf("%s is a shell builtin\n", cmd.args[0])
+		return nil
+	}
+	pathString := os.Getenv("PATH")
+	paths := strings.Split(pathString, ":")
+
+	for _, path := range paths {
+		fp := filepath.Join(path, cmd.args[0])
+		if _, err := os.Stat(fp); err == nil {
+
+			fmt.Println(fp)
+			return nil
+
+		}
+
 	}
 
-	fmt.Printf("%s is a shell builtin\n", cmd.args[0])
-	return nil
+	return fmt.Errorf("%s: not found", cmd.args[0])
 }
 func Eval(cmd *Command) error {
 	fMaps := GetFuncMap()
