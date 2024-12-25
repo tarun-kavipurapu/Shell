@@ -19,6 +19,9 @@ func main() {
 			fmt.Println(err)
 		}
 		commands := strings.Fields(ansString)
+		if len(commands) == 0 {
+			continue
+		}
 		cmd := &Command{
 			cmd:  commands[0],
 			args: commands[1:],

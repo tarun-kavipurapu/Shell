@@ -26,6 +26,7 @@ func GetFuncMap() map[string]func(cmd *Command) error {
 			"exit": evalExit,
 			"echo": evalEcho,
 			"type": evalType,
+			"pwd":  evalPwd,
 		}
 	})
 
@@ -73,6 +74,19 @@ func evalType(cmd *Command) error {
 	}
 
 	return fmt.Errorf("%s: not found", cmd.args[0])
+}
+func evalPwd(cmd *Command) error {
+	if len(cmd.args) > 0 {
+		return fmt.Errorf("too many args")
+	}
+
+	dir, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(dir)
+	return nil
 }
 
 /*
