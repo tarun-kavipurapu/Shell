@@ -27,6 +27,7 @@ func GetFuncMap() map[string]func(cmd *Command) error {
 			"echo": evalEcho,
 			"type": evalType,
 			"pwd":  evalPwd,
+			"cd":   evalCd,
 		}
 	})
 
@@ -87,6 +88,18 @@ func evalPwd(cmd *Command) error {
 
 	fmt.Println(dir)
 	return nil
+}
+
+func evalCd(cmd *Command) error {
+
+	newPath := cmd.args[0]
+	err := os.Chdir(newPath)
+	if err != nil {
+		return fmt.Errorf("cd: /non-existing-directory: No such file or directory")
+	}
+
+	return nil
+
 }
 
 /*
